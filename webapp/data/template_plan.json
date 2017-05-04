@@ -1,0 +1,78 @@
+    {
+    	"text": "test25name",
+    	"planningAmount": 100000,
+    	"Currency": "CNY",
+    	"level": 0,
+    	"height": 2,
+    	"valueState": "None",
+    	"valueStateText": "",
+    	"nodes": [{
+    		"planningAmount": 50000,
+    		"parentAmount": 100000,
+    		"text": "成都",
+    		"Currency": "CNY",
+    		"DimensionId": "AREA",
+    		"DimensionItemRef": "CHENGDU",
+    		"level": 1,
+    		"height": 2,
+    		"valueState": "None",
+    		"valueStateText": "Enter Planning Amount",
+    		"nodes": [{
+    			"planningAmount": 25000,
+    			"parentAmount": 50000,
+    			"text": "电子商务",
+    			"Currency": "CNY",
+    			"DimensionId": "CHANNEL",
+    			"DimensionItemRef": "ELECTRICITYBUSINESS",
+    			"level": 2,
+    			"height": 2,
+    			"valueState": "None",
+    			"valueStateText": "Enter Planning Amount"
+    		}, {
+    			"planningAmount": 25000,
+    			"parentAmount": 50000,
+    			"text": "批发",
+    			"Currency": "CNY",
+    			"DimensionId": "CHANNEL",
+    			"DimensionItemRef": "WHOLESALER",
+    			"level": 2,
+    			"height": 2,
+    			"valueState": "None",
+    			"valueStateText": "Enter Planning Amount"
+    		}]
+    	}, {
+    		"planningAmount": 50000,
+    		"parentAmount": 100000,
+    		"text": "北京",
+    		"Currency": "CNY",
+    		"DimensionId": "AREA",
+    		"DimensionItemRef": "BEIJING",
+    		"level": 1,
+    		"height": 2,
+    		"valueState": "None",
+    		"valueStateText": "Enter Planning Amount",
+    		"nodes": [{
+    			"planningAmount": 25000,
+    			"parentAmount": 50000,
+    			"text": "电子商务",
+    			"Currency": "CNY",
+    			"DimensionId": "CHANNEL",
+    			"DimensionItemRef": "ELECTRICITYBUSINESS",
+    			"level": 2,
+    			"height": 2,
+    			"valueState": "None",
+    			"valueStateText": "Enter Planning Amount"
+    		}, {
+    			"planningAmount": 25000,
+    			"parentAmount": 50000,
+    			"text": "批发",
+    			"Currency": "CNY",
+    			"DimensionId": "CHANNEL",
+    			"DimensionItemRef": "WHOLESALER",
+    			"level": 2,
+    			"height": 2,
+    			"valueState": "None",
+    			"valueStateText": "Enter Planning Amount"
+    		}]
+    	}]
+    }
