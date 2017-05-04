@@ -24,8 +24,8 @@ sap.ui.define([
 				boxHeightWPadding = 100,
 				duration = 300;
 
-			var svgHeight = 500,
-				svgWidth = 1000;
+			var svgHeight = 700,
+				svgWidth = 1130;
 
 			var div = d3.select('#' + containerId).append("div")
 				.attr("class", "tooltip")

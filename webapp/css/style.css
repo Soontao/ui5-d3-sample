@@ -6,8 +6,7 @@
 
 svg {
     margin-top: 32px;
-    background-color: whitesmoke;
-    border: 1px solid #aaa;
+    background-color: #fafafa;
 }
 
 .node rect {
