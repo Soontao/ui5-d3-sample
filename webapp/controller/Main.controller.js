@@ -263,8 +263,7 @@ sap.ui.define([
 				link
 					.exit()
 					.transition()
-					.duration(duration)
-					.style("display", "none")
+					.duration(0)
 					.remove();
 
 				// Update the links positions (old and new)
