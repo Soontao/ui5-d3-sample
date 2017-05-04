@@ -1,5 +1,9 @@
 /* Enter your custom styles here */
 
+.container {
+    text-align: center;
+}
+
 svg {
     margin-top: 32px;
     background-color: whitesmoke;

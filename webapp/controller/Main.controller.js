@@ -13,16 +13,16 @@ sap.ui.define([
 			var containerSelector = '#' + containerId;
 			var container = d3.select(containerSelector);
 			var containerParent = document.getElementById(containerId).parentElement;
+			// 
 			var containerParentWidth = containerParent;
 			var containerParentHeight = containerParent;
-			// var div = container.append("div");
-			// div.html("Hello, world!");
 
 			var data;
 			var boxWidth = 150,
 				boxHeight = 40,
 				boxWidthWPadding = 200,
-				boxHeightWPadding = 100;
+				boxHeightWPadding = 100,
+				duration = 300;
 
 			var svgHeight = 500,
 				svgWidth = 1000;
@@ -103,11 +103,11 @@ sap.ui.define([
 
 				data = json;
 
-				draw();
+				draw(data);
 
 			});
 
-			function draw() {
+			function draw(source) {
 
 				var nodes = tree.nodes(data),
 					links = tree.links(nodes);
@@ -126,6 +126,9 @@ sap.ui.define([
 				// Add any new nodes
 				var nodeEnter = node.enter().append("g")
 					.attr("class", "node")
+					.attr('transform', function(d) {
+						return 'translate(' + (source.y0 + boxWidth / 2) + ',' + source.x0 + ')';
+					})
 					.on('click', toggleNode);
 
 				var offsetX = svgWidth / 2 - boxWidth;
@@ -133,10 +136,18 @@ sap.ui.define([
 				// Draw the rectangle person boxes
 				nodeEnter.append("rect")
 					.attr({
-						x: offsetX - (boxWidth / 2),
-						y: -(boxHeight / 2),
 						width: boxWidth,
 						height: boxHeight
+					})
+					.attr('x', function(d) {
+						if (d.parent) {
+							return offsetX - (boxWidth / 2) - (d.x - d.parent.x);
+						} else {
+							return offsetX - (boxWidth / 2);
+						}
+					})
+					.attr('y', function(d) {
+						return -(d.parent && (d.y - d.parent.y)) || 0;
 					})
 					.on('mouseover', function(d) {
 						div.transition()
@@ -156,7 +167,16 @@ sap.ui.define([
 
 				// Draw the person's name and position it inside the box
 				nodeEnter.append("text")
-					.attr('dx', offsetX)
+					.attr('dx', function(d) {
+						if (d.parent) {
+							return offsetX - (d.x - d.parent.x);
+						} else {
+							return offsetX;
+						}
+					})
+					.attr('dy', function(d) {
+						return -(d.parent && (d.y - d.parent.y)) || 0;
+					})
 					.style("text-anchor", "middle")
 					.text(function(d) {
 						return d.text;
@@ -171,11 +191,32 @@ sap.ui.define([
 							.text("Planning Amount:" + d.planningAmount)
 							.style("left", (d3.event.pageX) + "px")
 							.style("top", (d3.event.pageY) + "px");
-					}).on('mouseout', function(d) {
+					})
+					.on('mouseout', function(d) {
 						div.transition()
 							.duration(300)
 							.style("opacity", 1e-6);
 					});
+
+				var nodeUpdate = node.transition()
+					.duration(duration)
+					.attr("transform", function(d) {
+						return "translate(" + d.x + "," + (d.y) + ")";
+					});
+
+				nodeUpdate.select('rect')
+					.attr({
+						x: offsetX - (boxWidth / 2),
+						y: -(boxHeight / 2),
+						width: boxWidth,
+						height: boxHeight
+					});
+
+				// Move text to it's proper position
+				nodeUpdate.select('text')
+					.attr("dx", offsetX)
+					.attr("dy", 0)
+					.style('fill-opacity', 1);
 
 				// Update the position of both old and new nodes
 				node.attr("transform", function(d) {
@@ -183,29 +224,59 @@ sap.ui.define([
 				});
 
 				// Remove nodes we aren't showing anymore
-				node.exit().remove();
+				var NodeExit = node
+					.exit()
+					.transition()
+					.duration(duration)
+					.remove();
+
+				NodeExit.select('rect')
+					.attr({
+						width: 0,
+						height: 0
+					});
+
+				// Fade out the text as we remove it
+				NodeExit
+					.select('text')
+					.style('fill-opacity', 0)
+					.remove();
 
 				// Update links
 				var link = svg.selectAll("path.link")
-
-				// The function we are passing provides d3 with an id
-				// so that it can track when data is being added and removed.
-				// This is not necessary if the tree will only be drawn once
-				// as in the basic example.
-				.data(links, function(d) {
-					return d.target.id;
-				});
+					.data(links, function(d) {
+						return d.target.id;
+					});
 
 				// Add new links    
-				link.enter().append("path")
-					.attr("class", "link");
+				link
+					.enter()
+					.append("path")
+					.attr("class", "link")
+					.attr("d", function(d) {
+						return "M" + (offsetX + source.x) + "," + (source.y + boxHeight / 2) + "V" + source.y + "H" + (offsetX + source.x) + "V" +
+							source.y;
+					});
 
 				// Remove any links we don't need anymore
 				// if part of the tree was collapsed
-				link.exit().remove();
+				link
+					.exit()
+					.transition()
+					.duration(duration)
+					.style("display", "none")
+					.remove();
 
 				// Update the links positions (old and new)
-				link.attr("d", elbow(offsetX));
+				link
+					.transition()
+					.duration(duration)
+					.attr("d", elbow(offsetX));
+
+				nodes.forEach(function(node) {
+					node.x0 = node.x;
+					node.y0 = node.y;
+				});
 			}
 
 			/**
@@ -217,7 +288,7 @@ sap.ui.define([
 				} else {
 					collapse(d);
 				}
-				draw();
+				draw(d);
 			}
 
 			/**
@@ -257,6 +328,7 @@ sap.ui.define([
 					return "M" + sourceY + "," + sourceX + "V" + ((sourceX + (targetX - sourceX) / 2)) + "H" + targetY + "V" + targetX;
 				};
 			};
+
 		}
 
 	});
