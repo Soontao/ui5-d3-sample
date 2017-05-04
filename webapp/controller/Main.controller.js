@@ -45,10 +45,32 @@ sap.ui.define([
 				.attr('height', svgHeight)
 				.call(zoom)
 				.append('g')
+				.attr("transform", "translate(150,200)");
 
-			// Left padding of tree so that the whole root node is on the screen.
-			// TODO: find a better way
-			.attr("transform", "translate(150,200)");
+			// filters go in defs element
+			var defs = svg.append("defs");
+
+			var filter = defs.append("filter")
+				.attr("id", "drop-shadow")
+				.attr("height", "130%");
+
+			filter.append("feGaussianBlur")
+				.attr("in", "SourceAlpha")
+				.attr("stdDeviation", 5)
+				.attr("result", "blur");
+
+			filter.append("feOffset")
+				.attr("in", "blur")
+				.attr("dx", 5)
+				.attr("dy", 5)
+				.attr("result", "offsetBlur");
+
+			var feMerge = filter.append("feMerge");
+
+			feMerge.append("feMergeNode")
+				.attr("in", "offsetBlur");
+			feMerge.append("feMergeNode")
+				.attr("in", "SourceGraphic");
 
 			var tree = d3.layout.tree()
 
@@ -149,6 +171,7 @@ sap.ui.define([
 					.attr('y', function(d) {
 						return -(d.parent && (d.y - d.parent.y)) || 0;
 					})
+					.style("filter", "url(#drop-shadow)")
 					.on('mouseover', function(d) {
 						div.transition()
 							.duration(300)
